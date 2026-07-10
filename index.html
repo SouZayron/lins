@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-<script src="https://www.youtube.com/iframe_api"></script>
 <style>
 /* ============================================================
    TOKENS
@@ -214,11 +213,16 @@ section:first-of-type{padding-top:40px;}
   background-size:200% auto;
   -webkit-background-clip:text;background-clip:text;color:transparent;
   margin-bottom:14px;
-  animation:name-shimmer 7s ease-in-out infinite;
+  display:inline-block;
+  animation:name-shimmer 7s ease-in-out infinite, name-float 4.5s ease-in-out infinite;
 }
 @keyframes name-shimmer{
   0%,100%{background-position:0% 50%;}
   50%{background-position:100% 50%;}
+}
+@keyframes name-float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
 }
 .hero-sub{font-family:var(--font-display);font-size:19px;color:var(--light);font-weight:500;margin-bottom:18px;letter-spacing:.02em;}
 .hero-desc{max-width:440px;color:#B9C6E8;font-size:15.5px;margin-bottom:34px;font-weight:300;}
@@ -322,7 +326,6 @@ section:first-of-type{padding-top:40px;}
 .friend-avatar-emoji{font-size:32px;background:rgba(179,214,244,.08);}
 .friend-name{font-size:15px;font-weight:700;font-family:var(--font-display);margin-bottom:3px;}
 .friend-nick{font-size:12.5px;color:var(--primary);margin-bottom:8px;}
-.friend-id{font-size:11px;color:#8FA3D6;margin-bottom:10px;}
 .friend-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:#4FF6A0;font-weight:600;}
 .friend-status .dot{width:7px;height:7px;border-radius:50%;background:#4FF6A0;box-shadow:0 0 8px #4FF6A0;}
 
@@ -428,53 +431,6 @@ section:first-of-type{padding-top:40px;}
 .badges-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:36px;}
 
 /* ============================================================
-   NOW PLAYING
-   ============================================================ */
-.np-card{padding:30px 36px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
-.np-mini{padding:26px 34px;display:flex;align-items:center;justify-content:center;gap:26px;flex-wrap:wrap;}
-.np-cover{
-  width:78px;height:78px;border-radius:16px;flex-shrink:0;
-  background:var(--grad-blue);display:flex;align-items:center;justify-content:center;color:#04081F;
-  animation:spin-slow 8s linear infinite;
-}
-@keyframes spin-slow{from{transform:rotate(0);}to{transform:rotate(360deg);}}
-.np-info{flex:1;min-width:180px;}
-.np-title{font-family:var(--font-display);font-weight:700;font-size:16px;}
-.np-artist{font-size:13px;color:#8FA3D6;margin-bottom:12px;}
-.np-progress{width:100%;height:5px;border-radius:10px;background:rgba(255,255,255,.08);overflow:hidden;}
-.np-progress-fill{height:100%;width:38%;background:var(--grad-blue);border-radius:10px;position:relative;}
-.np-times{display:flex;justify-content:space-between;font-size:11px;color:#8FA3D6;margin-top:6px;}
-.np-controls{display:flex;align-items:center;gap:14px;}
-.np-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:var(--light);transition:all var(--t-fast);}
-.np-btn.big{width:48px;height:48px;background:var(--grad-blue);color:#04081F;}
-.np-btn:hover{transform:scale(1.1);box-shadow:0 0 16px rgba(79,170,246,.5);}
-.np-volume{display:flex;align-items:center;gap:8px;color:#8FA3D6;}
-.np-volume-bar{width:70px;height:4px;border-radius:10px;background:rgba(255,255,255,.1);}
-.np-volume-fill{width:65%;height:100%;background:var(--primary);border-radius:10px;}
-.np-volume-slider{
-  -webkit-appearance:none;appearance:none;
-  width:90px;height:4px;border-radius:10px;
-  background:linear-gradient(90deg, var(--primary) 70%, rgba(255,255,255,.12) 70%);
-  outline:none;cursor:pointer;
-}
-.np-volume-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;appearance:none;
-  width:13px;height:13px;border-radius:50%;
-  background:var(--primary);box-shadow:0 0 8px rgba(79,170,246,.7);
-  border:2px solid #04081F;cursor:pointer;
-}
-.np-volume-slider::-moz-range-thumb{
-  width:13px;height:13px;border-radius:50%;
-  background:var(--primary);box-shadow:0 0 8px rgba(79,170,246,.7);
-  border:2px solid #04081F;cursor:pointer;
-}
-.np-live-dot{
-  display:inline-block;width:8px;height:8px;border-radius:50%;
-  background:#FF5C7C;box-shadow:0 0 10px #FF5C7C;
-  margin-right:6px;animation:pulse 1.4s infinite;
-}
-
-/* ============================================================
    CONTACT
    ============================================================ */
 .contact-card{padding:50px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;}
@@ -492,9 +448,102 @@ footer .heart{color:var(--primary);}
 /* fade-in-up utility for hero elements */
 .fiu{animation:fiu .9s var(--ease) both;}
 @keyframes fiu{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* ============================================================
+   LOCK SCREEN
+   ============================================================ */
+body.locked{overflow:hidden;height:100vh;}
+
+#lockscreen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  background:linear-gradient(160deg, #07156E 0%, #060C3F 55%, #07060E 100%);
+  clip-path:circle(150% at var(--ox,50%) var(--oy,50%));
+  transition:clip-path 1.15s var(--ease);
+}
+#lockscreen::before{
+  content:'';position:absolute;inset:-15%;
+  background:
+    radial-gradient(circle at 18% 15%, rgba(79,170,246,.45), transparent 55%),
+    radial-gradient(circle at 88% 12%, rgba(10,55,199,.5), transparent 55%),
+    radial-gradient(circle at 50% 105%, rgba(7,21,110,.85), transparent 60%);
+  filter:blur(80px);
+}
+#lockscreen::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(6,12,63,.32);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+#lockscreen.reveal{clip-path:circle(0% at var(--ox,50%) var(--oy,50%));}
+
+.lock-blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;}
+.lock-blob-1{width:480px;height:480px;background:var(--primary);top:-120px;left:-100px;animation:float1 20s ease-in-out infinite;}
+.lock-blob-2{width:420px;height:420px;background:var(--accent);bottom:-140px;right:-100px;animation:float2 24s ease-in-out infinite;}
+
+.lock-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;max-width:420px;padding:0 26px;}
+.lock-brand{font-family:var(--font-display);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--light);opacity:.75;display:flex;align-items:center;gap:8px;margin-bottom:22px;}
+.lock-brand .dot{width:6px;height:6px;border-radius:50%;background:var(--primary);box-shadow:0 0 10px var(--primary);}
+.lock-clock{font-family:var(--font-display);font-size:clamp(50px,13vw,72px);font-weight:600;color:#EAF2FF;letter-spacing:-0.01em;line-height:1;}
+.lock-date{font-family:var(--font-body);font-size:13.5px;color:var(--light);opacity:.7;margin:8px 0 50px;text-transform:capitalize;}
+
+.slide-track{
+  position:relative;width:100%;height:64px;border-radius:100px;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-soft);
+  touch-action:none;
+}
+.slide-fill{position:absolute;left:5px;top:5px;bottom:5px;width:54px;border-radius:100px;background:var(--grad-blue);opacity:.9;pointer-events:none;}
+.slide-text{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.03em;
+  background:linear-gradient(90deg, rgba(234,242,255,.35) 0%, #fff 50%, rgba(234,242,255,.35) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:200% 100%;
+  animation:shine 2.6s linear infinite;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+@keyframes shine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.slide-knob{
+  position:absolute;left:5px;top:5px;width:54px;height:54px;border-radius:50%;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(3,6,30,.5);
+  cursor:grab;z-index:3;
+  transition:transform .35s var(--ease);
+  outline:none;
+}
+.slide-knob:active{cursor:grabbing;}
+.slide-knob:focus-visible{box-shadow:0 0 0 3px var(--primary), 0 6px 18px rgba(3,6,30,.5);}
+.slide-knob svg{width:22px;height:22px;color:var(--accent);}
+
+.lock-hint{margin-top:20px;font-size:12px;color:var(--light);opacity:.45;font-family:var(--font-body);}
+
+#lockscreen.unlocking .slide-text{opacity:0;}
 </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ================= LOCK SCREEN ================= -->
+<div id="lockscreen">
+  <div class="lock-blob lock-blob-1"></div>
+  <div class="lock-blob lock-blob-2"></div>
+  <div class="lock-content">
+    <div class="lock-brand"><span class="dot"></span> DANI LINS</div>
+    <div class="lock-clock" id="lock-clock">--:--</div>
+    <div class="lock-date" id="lock-date"></div>
+    <div class="slide-track" id="slideTrack">
+      <div class="slide-fill" id="slideFill"></div>
+      <span class="slide-text">Deslize para desbloquear</span>
+      <div class="slide-knob" id="slideKnob" tabindex="0" role="button" aria-label="Deslizar para desbloquear">
+        <i data-lucide="chevron-right"></i>
+      </div>
+    </div>
+    <div class="lock-hint">toque e arraste</div>
+  </div>
+</div>
 
 <div class="top-glow"></div>
 
@@ -546,35 +595,30 @@ footer .heart{color:var(--primary);}
         <div class="friend-avatar"><img src="https://xatimg.com/image/lDC08wreH4Wh.png" alt="Enigm4tico"></div>
         <div class="friend-name">Enigm4tico</div>
         <div class="friend-nick">Béfi</div>
-        <div class="friend-id">#0001</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
         <div class="friend-avatar"><img src="https://i0.xat.com/web_gear/chat/GetImage9.php?s&amp;W=80&amp;H=80&amp;U=https://xatimg.com/image/mdOSd3Ba4Trw.png" alt="Morgan"></div>
         <div class="friend-name">Morgan</div>
         <div class="friend-nick">chefinha</div>
-        <div class="friend-id">#0002</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
         <div class="friend-avatar"><img src="https://xatimg.com/image/GisItSMMzkWF.png" alt="Khels"></div>
         <div class="friend-name">Khels</div>
         <div class="friend-nick">mío tio</div>
-        <div class="friend-id">#0003</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
         <div class="friend-avatar friend-avatar-emoji">💗</div>
         <div class="friend-name">Maiara</div>
         <div class="friend-nick">ermã</div>
-        <div class="friend-id">#0004</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
         <div class="friend-avatar friend-avatar-emoji">🐾</div>
         <div class="friend-name">Amora</div>
         <div class="friend-nick">petlove</div>
-        <div class="friend-id">#0005</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
     </div>
@@ -676,22 +720,6 @@ footer .heart{color:var(--primary);}
   </div>
 </section>
 
-<!-- ================= NOW PLAYING ================= -->
-<section id="nowplaying">
-  <div class="wrap">
-    <div class="eyebrow reveal">Tocando agora</div>
-    <h2 class="section-title reveal">Now <span>Playing</span></h2>
-    <div class="card np-mini reveal">
-      <button class="np-btn big" id="radio-toggle" onclick="toggleRadio()"><i data-lucide="play" id="radio-icon"></i></button>
-      <div class="np-volume">
-        <i data-lucide="volume-2" style="width:16px;height:16px;"></i>
-        <input type="range" id="radio-volume" min="0" max="100" value="70" class="np-volume-slider">
-      </div>
-    </div>
-    <div id="yt-player" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;"></div>
-  </div>
-</section>
-
 <footer>
   <div class="wrap">
     Feito por Enigm4tico · © <span id="year"></span>
@@ -755,80 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 })();
 
-/* now playing: YouTube-backed player (play/pause + volume) */
-let ytPlayer;
-window.onYouTubeIframeAPIReady = function(){
-  ytPlayer = new YT.Player('yt-player', {
-    height: '1',
-    width: '1',
-    videoId: '-jliPWRnkmE',
-    playerVars: {
-      listType: 'playlist',
-      list: 'PLzfYxR4F7nsC46SQ5q3mW4GH9Xkuui_wM',
-      index: 14,
-      autoplay: 1,
-      mute: 1,
-      controls: 0,
-      playsinline: 1
-    },
-    events: {
-      onReady: (e) => {
-        e.target.setVolume(70);
-        e.target.playVideo();
-        setIcon('pause');
-        setTimeout(() => { try { e.target.unMute(); } catch(err){} }, 900);
-        ['click','keydown','touchstart'].forEach(evt =>
-          document.addEventListener(evt, unmuteOnce, { once:true })
-        );
-      },
-      onStateChange: (e) => {
-        if (e.data === YT.PlayerState.PLAYING) setIcon('pause');
-        else if (e.data === YT.PlayerState.PAUSED) setIcon('play');
-      }
-    }
-  });
-};
-
-function unmuteOnce(){
-  if (ytPlayer && ytPlayer.isMuted && ytPlayer.isMuted()){
-    ytPlayer.unMute();
-    const vol = document.getElementById('radio-volume');
-    ytPlayer.setVolume(vol ? vol.value : 70);
-  }
-}
-
-function setIcon(name){
-  const icon = document.getElementById('radio-icon');
-  if (!icon) return;
-  icon.setAttribute('data-lucide', name);
-  if (window.lucide) lucide.createIcons();
-}
-
-window.toggleRadio = function(){
-  if (!ytPlayer || !ytPlayer.getPlayerState) return;
-  const state = ytPlayer.getPlayerState();
-  if (state === YT.PlayerState.PLAYING){
-    ytPlayer.pauseVideo();
-  } else {
-    ytPlayer.playVideo();
-    unmuteOnce();
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  const volume = document.getElementById('radio-volume');
-  if (volume){
-    volume.addEventListener('input', (e) => {
-      const v = e.target.value;
-      if (ytPlayer && ytPlayer.setVolume){
-        ytPlayer.setVolume(v);
-        if (v > 0) unmuteOnce();
-      }
-      e.target.style.background = `linear-gradient(90deg, var(--primary) ${v}%, rgba(255,255,255,.12) ${v}%)`;
-    });
-  }
-});
-
 function toggleTrack(btn){
   const card = btn.closest('.track-card');
   const iframe = card.querySelector('.track-embed iframe');
@@ -844,6 +798,101 @@ function toggleTrack(btn){
 }
 
 
+</script>
+
+<script>
+/* ================= LOCK SCREEN LOGIC ================= */
+(function(){
+  const lock = document.getElementById('lockscreen');
+  const track = document.getElementById('slideTrack');
+  const knob = document.getElementById('slideKnob');
+  const fill = document.getElementById('slideFill');
+  const clockEl = document.getElementById('lock-clock');
+  const dateEl = document.getElementById('lock-date');
+  if (!lock || !track || !knob) return;
+
+  function updateClock(){
+    const now = new Date();
+    clockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    dateEl.textContent = now.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+  }
+  updateClock();
+  setInterval(updateClock, 15000);
+
+  const KNOB = 54;
+  let dragging = false, startX = 0, dragX = 0, maxDrag = 0, unlocked = false;
+
+  function setup(){ maxDrag = track.clientWidth - KNOB - 10; }
+  setup();
+  window.addEventListener('resize', setup);
+
+  function pointX(e){ return e.touches ? e.touches[0].clientX : e.clientX; }
+
+  function onDown(e){
+    if (unlocked) return;
+    dragging = true;
+    startX = pointX(e) - dragX;
+    knob.style.transition = 'none';
+  }
+  function onMove(e){
+    if (!dragging) return;
+    const x = pointX(e) - startX;
+    dragX = Math.min(Math.max(x, 0), maxDrag);
+    knob.style.transform = 'translateX(' + dragX + 'px)';
+    fill.style.width = (KNOB + dragX) + 'px';
+  }
+  function onUp(){
+    if (!dragging) return;
+    dragging = false;
+    knob.style.transition = '';
+    if (dragX >= maxDrag * 0.8) {
+      unlock();
+    } else {
+      dragX = 0;
+      knob.style.transform = 'translateX(0)';
+      fill.style.width = KNOB + 'px';
+    }
+  }
+
+  knob.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+  knob.addEventListener('touchstart', onDown, {passive:true});
+  window.addEventListener('touchmove', onMove, {passive:true});
+  window.addEventListener('touchend', onUp);
+
+  knob.addEventListener('keydown', function(e){
+    if (unlocked) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      dragX = maxDrag;
+      knob.style.transform = 'translateX(' + maxDrag + 'px)';
+      fill.style.width = (KNOB + maxDrag) + 'px';
+      unlock();
+    }
+  });
+
+  function unlock(){
+    if (unlocked) return;
+    unlocked = true;
+    dragX = maxDrag;
+    knob.style.transform = 'translateX(' + maxDrag + 'px)';
+    fill.style.width = (KNOB + maxDrag) + 'px';
+    lock.classList.add('unlocking');
+
+    const rect = knob.getBoundingClientRect();
+    const ox = ((rect.left + rect.width/2) / window.innerWidth) * 100;
+    const oy = ((rect.top + rect.height/2) / window.innerHeight) * 100;
+    lock.style.setProperty('--ox', ox + '%');
+    lock.style.setProperty('--oy', oy + '%');
+
+    setTimeout(function(){ lock.classList.add('reveal'); }, 250);
+    setTimeout(function(){
+      lock.style.display = 'none';
+      document.body.classList.remove('locked');
+    }, 250 + 1200);
+  }
+})();
 </script>
 </body>
 </html>
