@@ -197,7 +197,7 @@ section:first-of-type{padding-top:40px;}
 }
 .hero-left{position:relative;z-index:2;}
 .hero-kicker{
-  display:inline-flex;align-items:center;gap:8px;
+  display:flex;width:fit-content;align-items:center;gap:8px;
   padding:8px 16px;border-radius:100px;
   background:rgba(79,170,246,0.10);border:1px solid rgba(79,170,246,.3);
   font-size:12.5px;font-family:var(--font-display);letter-spacing:.1em;text-transform:uppercase;
@@ -209,20 +209,28 @@ section:first-of-type{padding-top:40px;}
 .hero-name{
   font-size:clamp(42px,6vw,68px);
   line-height:1.02;
-  background:linear-gradient(135deg,#EAF2FF 20%, var(--primary) 60%, var(--accent) 100%);
-  background-size:200% auto;
-  -webkit-background-clip:text;background-clip:text;color:transparent;
   margin-bottom:14px;
+  display:block;
+}
+.hero-name .letter{
   display:inline-block;
-  animation:name-shimmer 7s ease-in-out infinite, name-float 4.5s ease-in-out infinite;
+  background:linear-gradient(135deg,#EAF2FF 10%, var(--primary) 50%, var(--accent) 90%);
+  background-size:400% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  opacity:0;
+  transform:translateY(26px) rotate(5deg);
+  white-space:pre;
+  animation:
+    letter-in .65s var(--ease) forwards,
+    name-shimmer 6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 45ms), calc(1s + var(--i) * 90ms);
+}
+@keyframes letter-in{
+  to{opacity:1;transform:translateY(0) rotate(0);}
 }
 @keyframes name-shimmer{
   0%,100%{background-position:0% 50%;}
   50%{background-position:100% 50%;}
-}
-@keyframes name-float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-8px);}
 }
 .hero-sub{font-family:var(--font-display);font-size:19px;color:var(--light);font-weight:500;margin-bottom:18px;letter-spacing:.02em;}
 .hero-desc{max-width:440px;color:#B9C6E8;font-size:15.5px;margin-bottom:34px;font-weight:300;}
@@ -563,7 +571,7 @@ body.locked{overflow:hidden;height:100vh;}
     <div class="card hero-card reveal in">
       <div class="hero-left">
         <div class="hero-kicker fiu"><span class="pulse"></span> Online agora</div>
-        <h1 class="hero-name fiu" style="animation-delay:.1s">DANI LINS</h1>
+        <h1 class="hero-name" id="heroName">DANI LINS</h1>
         <div class="hero-sub fiu" style="animation-delay:.2s">Hits Sem Limites!</div>
         <p class="hero-desc fiu" style="animation-delay:.3s">
           Bem-vindo ao meu cantinho no XatSpace. Aqui você encontra um pouco de mim:
@@ -892,6 +900,25 @@ function toggleTrack(btn){
       document.body.classList.remove('locked');
     }, 250 + 1200);
   }
+})();
+</script>
+
+<script>
+/* ================= ANIMAÇÃO LETRA A LETRA — DANI LINS ================= */
+(function(){
+  const el = document.getElementById('heroName');
+  if (!el) return;
+  const text = el.textContent;
+  el.textContent = '';
+  let i = 0;
+  text.split('').forEach(function(ch){
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.style.setProperty('--i', i);
+    span.textContent = ch === ' ' ? '\u00A0' : ch;
+    el.appendChild(span);
+    i++;
+  });
 })();
 </script>
 </body>
