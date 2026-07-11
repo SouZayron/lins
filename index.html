@@ -91,6 +91,45 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .curve-lines{position:fixed;inset:0;z-index:-2;opacity:.18;pointer-events:none;}
 
 /* ============================================================
+   SHOOTING STARS (estrelas cadentes)
+   ============================================================ */
+.shooting-stars{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;}
+.shooting-star{
+  position:absolute;
+  width:2px;height:2px;
+  border-radius:50%;
+  background:#EAF2FF;
+  opacity:0;
+  filter:drop-shadow(0 0 6px rgba(234,242,255,.9));
+  animation-name:shoot;
+  animation-timing-function:ease-in;
+  animation-iteration-count:infinite;
+}
+.shooting-star::before{
+  content:'';
+  position:absolute;
+  top:50%;left:50%;
+  width:110px;height:1px;
+  background:linear-gradient(90deg, rgba(234,242,255,.9), transparent);
+  transform:translateY(-50%) rotate(225deg);
+  transform-origin:left center;
+}
+@keyframes shoot{
+  0%{opacity:0;transform:translate(0,0);}
+  4%{opacity:1;}
+  20%{opacity:0;transform:translate(230px,230px);}
+  100%{opacity:0;transform:translate(230px,230px);}
+}
+.ss-1{top:6%;left:15%;animation-duration:9s;animation-delay:1s;}
+.ss-2{top:14%;left:60%;animation-duration:11s;animation-delay:5.5s;}
+.ss-3{top:48%;left:6%;animation-duration:10s;animation-delay:9s;}
+.ss-4{top:62%;left:65%;animation-duration:8.5s;animation-delay:3s;}
+.ss-5{top:32%;left:38%;animation-duration:12s;animation-delay:7s;}
+@media (max-width:700px){
+  .ss-2,.ss-4{display:none;}
+}
+
+/* ============================================================
    LAYOUT / UTILITY
    ============================================================ */
 .wrap{max-width:1240px;margin:0 auto;padding:0 28px;}
@@ -328,9 +367,23 @@ section:first-of-type{padding-top:40px;}
   background:var(--grad-blue);color:#04081F;
   border:2px solid rgba(255,255,255,.15);
   position:relative;
-  overflow:hidden;
+  overflow:visible;
 }
-.friend-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.friend-avatar::before{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  border-radius:50%;
+  padding:2px;
+  background:conic-gradient(from 0deg, transparent 0%, transparent 60%, rgba(79,170,246,.9) 78%, #EAF2FF 88%, rgba(79,170,246,.9) 96%, transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:avatar-glow 4.5s linear infinite;
+  pointer-events:none;
+}
+@keyframes avatar-glow{to{transform:rotate(360deg);}}
+.friend-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;position:relative;z-index:1;}
 .friend-avatar-emoji{font-size:32px;background:rgba(179,214,244,.08);}
 .friend-name{font-size:15px;font-weight:700;font-family:var(--font-display);margin-bottom:3px;}
 .friend-nick{font-size:12.5px;color:var(--primary);margin-bottom:8px;}
@@ -530,9 +583,82 @@ body.locked{overflow:hidden;height:100vh;}
 .lock-hint{margin-top:20px;font-size:12px;color:var(--light);opacity:.45;font-family:var(--font-body);}
 
 #lockscreen.unlocking .slide-text{opacity:0;}
+
+/* ============================================================
+   ONE PAGE MODE — painéis em tela cheia, sem rolagem
+   ============================================================ */
+html, body.onepage{height:100%;overflow:hidden;}
+body.onepage{height:100dvh;}
+
+.app{position:fixed;inset:0;overflow:hidden;z-index:1;}
+
+.panel{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:86px 0 84px;
+  opacity:0;visibility:hidden;
+  transform:translateY(26px) scale(.98);
+  transition:opacity .55s var(--ease), transform .6s var(--ease), visibility 0s linear .55s;
+  overflow:hidden;
+}
+.panel.active{
+  opacity:1;visibility:visible;
+  transform:translateY(0) scale(1);
+  transition:opacity .55s var(--ease), transform .6s var(--ease), visibility 0s linear 0s;
+  z-index:2;
+}
+.panel .wrap{width:100%;max-height:100%;overflow-y:auto;padding-bottom:6px;}
+.panel .wrap::-webkit-scrollbar{width:0;height:0;}
+
+.panel .eyebrow, .panel .section-title{text-align:center;}
+.panel .section-title{display:flex;justify-content:center;margin-bottom:24px;}
+.panel .eyebrow{display:flex;justify-content:center;}
+.panel .eyebrow::before{display:none;}
+
+/* compacta grades pra caber sem rolar */
+.panel .grid-5{gap:14px;}
+.panel .grid-3{gap:14px;}
+.panel .friend-card{padding:18px 12px;}
+.panel .friend-avatar{width:58px;height:58px;margin-bottom:10px;font-size:17px;}
+.panel .friend-name{font-size:13.5px;}
+.panel .friend-nick{font-size:11.5px;margin-bottom:6px;}
+.panel .track-card{padding:12px 16px;margin-bottom:10px;}
+.panel .track-thumb{width:48px;height:48px;border-radius:12px;}
+.panel .mini-card{padding:16px;}
+.panel .mini-icon{width:38px;height:38px;border-radius:12px;}
+
+.panel-footer{
+  text-align:center;font-size:12px;color:#6B7BB0;margin-top:22px;
+}
+.panel-footer .heart{color:var(--primary);}
+
+/* nav por pontos */
+.panel-nav{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  z-index:500;display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:100px;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--shadow-soft);
+}
+.panel-dot{
+  width:8px;height:8px;border-radius:50%;padding:0;border:none;
+  background:rgba(179,214,244,.32);cursor:pointer;
+  transition:all .35s var(--ease);
+}
+.panel-dot.active{width:24px;border-radius:100px;background:var(--grad-blue);box-shadow:0 0 10px rgba(79,170,246,.6);}
+.panel-dot:hover{background:rgba(179,214,244,.55);}
+.panel-dot.active:hover{background:var(--grad-blue);}
+
+@media(max-width:720px){
+  .panel{padding:78px 0 86px;}
+  .panel .grid-5{grid-template-columns:repeat(5,1fr);}
+  .panel .friend-avatar{width:44px;height:44px;font-size:14px;}
+  .panel .friend-nick{display:none;}
+}
 </style>
 </head>
-<body class="locked">
+<body class="locked onepage">
 
 <!-- ================= LOCK SCREEN ================= -->
 <div id="lockscreen">
@@ -564,9 +690,24 @@ body.locked{overflow:hidden;height:100vh;}
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 <div class="blob blob-3"></div>
+<div class="shooting-stars">
+  <span class="shooting-star ss-1"></span>
+  <span class="shooting-star ss-2"></span>
+  <span class="shooting-star ss-3"></span>
+  <span class="shooting-star ss-4"></span>
+  <span class="shooting-star ss-5"></span>
+</div>
 
+<nav class="panel-nav" id="panelNav" aria-label="Navegação">
+  <button class="panel-dot active" data-panel="0" aria-label="Início"></button>
+  <button class="panel-dot" data-panel="1" aria-label="Amigos"></button>
+  <button class="panel-dot" data-panel="2" aria-label="Músicas"></button>
+  <button class="panel-dot" data-panel="3" aria-label="Favoritos"></button>
+</nav>
+
+<div class="app" id="app">
 <!-- ================= HERO ================= -->
-<section id="hero">
+<section id="hero" class="panel active">
   <div class="wrap">
     <div class="card hero-card reveal in">
       <div class="hero-left">
@@ -577,7 +718,7 @@ body.locked{overflow:hidden;height:100vh;}
           Bem-vindo ao meu cantinho no XatSpace. Aqui você encontra um pouco de mim:
           minhas músicas favoritas e meus amigos.
         </p>
-        <a href="#friends" class="btn btn-primary fiu" style="animation-delay:.4s">
+        <a href="#friends" data-goto="1" class="btn btn-primary fiu" style="animation-delay:.4s">
           Explorar
         </a>
       </div>
@@ -593,7 +734,7 @@ body.locked{overflow:hidden;height:100vh;}
 </section>
 
 <!-- ================= FRIENDS ================= -->
-<section id="friends">
+<section id="friends" class="panel">
   <div class="wrap">
     <div class="eyebrow reveal">Círculo</div>
     <h2 class="section-title reveal">Fri<span>ends</span></h2>
@@ -606,25 +747,25 @@ body.locked{overflow:hidden;height:100vh;}
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
-        <div class="friend-avatar"><img src="https://i0.xat.com/web_gear/chat/GetImage9.php?s&amp;W=80&amp;H=80&amp;U=https://xatimg.com/image/mdOSd3Ba4Trw.png" alt="Morgan"></div>
+        <div class="friend-avatar"><img src="https://xatimg.com/image/tJ5rl7A0NYhM.png" alt="Morgan"></div>
         <div class="friend-name">Morgan</div>
         <div class="friend-nick">chefinha</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
-        <div class="friend-avatar"><img src="https://xatimg.com/image/GisItSMMzkWF.png" alt="Khels"></div>
+        <div class="friend-avatar"><img src="https://xatimg.com/image/zjsc0dLrwFsS.png" alt="Khels"></div>
         <div class="friend-name">Khels</div>
-        <div class="friend-nick">mío tio</div>
+        <div class="friend-nick">mió tio</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
-        <div class="friend-avatar friend-avatar-emoji">💗</div>
+        <div class="friend-avatar"><img src="https://xatimg.com/image/m64GF63f5JOG.png" alt="Maiara"></div>
         <div class="friend-name">Maiara</div>
         <div class="friend-nick">ermã</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
       </div>
       <div class="friend-card card reveal">
-        <div class="friend-avatar friend-avatar-emoji">🐾</div>
+        <div class="friend-avatar"><img src="https://xatimg.com/image/BMcBrU7FeOsl.png" alt="Amora"></div>
         <div class="friend-name">Amora</div>
         <div class="friend-nick">petlove</div>
         <div class="friend-status"><span class="dot"></span>Online</div>
@@ -634,7 +775,7 @@ body.locked{overflow:hidden;height:100vh;}
 </section>
 
 <!-- ================= TOP 5 TRACKS ================= -->
-<section id="tracks">
+<section id="tracks" class="panel">
   <div class="wrap">
     <div class="eyebrow reveal">Trilha sonora</div>
     <h2 class="section-title reveal">Eu <span>curto!!!</span></h2>
@@ -695,7 +836,7 @@ body.locked{overflow:hidden;height:100vh;}
 </section>
 
 <!-- ================= FAVORITES ================= -->
-<section id="favorites">
+<section id="favorites" class="panel">
   <div class="wrap">
     <div class="eyebrow reveal">Preferências</div>
     <h2 class="section-title reveal">Favor<span>ites</span></h2>
@@ -725,26 +866,15 @@ body.locked{overflow:hidden;height:100vh;}
         <div><div class="mini-label">Bebida</div><div class="mini-value">Tereré</div></div>
       </div>
     </div>
+    <div class="panel-footer">Feito por Enigm4tico · © <span id="year"></span></div>
   </div>
 </section>
-
-<footer>
-  <div class="wrap">
-    Feito por Enigm4tico · © <span id="year"></span>
-  </div>
-</footer>
+</div><!-- /.app -->
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
   document.getElementById('year').textContent = new Date().getFullYear();
-
-  /* scroll reveal */
-  const revealEls = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.12 });
-  revealEls.forEach(el => io.observe(el));
 
   /* starfield canvas */
   const canvas = document.getElementById('stars-canvas');
@@ -752,7 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let stars = [];
   function resize(){
     canvas.width = window.innerWidth;
-    canvas.height = document.body.scrollHeight;
+    canvas.height = window.innerHeight;
     stars = Array.from({length: Math.floor((canvas.width*canvas.height)/22000)}, () => ({
       x: Math.random()*canvas.width,
       y: Math.random()*canvas.height,
@@ -919,6 +1049,75 @@ function toggleTrack(btn){
     el.appendChild(span);
     i++;
   });
+})();
+</script>
+
+<script>
+/* ================= NAVEGAÇÃO ONE-PAGE (SEM ROLAGEM) ================= */
+(function(){
+  const panels = Array.from(document.querySelectorAll('.panel'));
+  const dots = Array.from(document.querySelectorAll('.panel-dot'));
+  if (!panels.length) return;
+
+  let current = 0;
+
+  function revealChildren(panel){
+    panel.querySelectorAll('.reveal').forEach(function(el, i){
+      el.classList.remove('in');
+      void el.offsetWidth; /* reinicia a animação */
+      setTimeout(function(){ el.classList.add('in'); }, i * 55);
+    });
+  }
+
+  function activate(index){
+    index = Math.max(0, Math.min(panels.length - 1, index));
+    if (index === current) return;
+    panels[current].classList.remove('active');
+    panels[index].classList.add('active');
+    dots.forEach(function(d, i){ d.classList.toggle('active', i === index); });
+    current = index;
+    revealChildren(panels[index]);
+  }
+
+  dots.forEach(function(dot, i){
+    dot.addEventListener('click', function(){ activate(i); });
+  });
+
+  document.querySelectorAll('[data-goto]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      activate(parseInt(el.getAttribute('data-goto'), 10));
+    });
+  });
+
+  window.addEventListener('keydown', function(e){
+    if (['ArrowRight','ArrowDown','PageDown'].includes(e.key)) { e.preventDefault(); activate(current + 1); }
+    if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); activate(current - 1); }
+  });
+
+  let touchStartX = 0, touchStartY = 0;
+  window.addEventListener('touchstart', function(e){
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, {passive:true});
+  window.addEventListener('touchend', function(e){
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
+      activate(dx < 0 ? current + 1 : current - 1);
+    }
+  }, {passive:true});
+
+  let wheelLock = false;
+  window.addEventListener('wheel', function(e){
+    if (wheelLock || Math.abs(e.deltaY) < 35) return;
+    wheelLock = true;
+    activate(e.deltaY > 0 ? current + 1 : current - 1);
+    setTimeout(function(){ wheelLock = false; }, 750);
+  }, {passive:true});
+
+  /* revela o conteúdo do painel inicial (hero) */
+  revealChildren(panels[0]);
 })();
 </script>
 </body>
